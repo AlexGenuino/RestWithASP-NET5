@@ -1,14 +1,11 @@
-﻿
-using RestWithASPNET.Hypermedia;
-using RestWithASPNET.Hypermedia.Abstract;
+﻿using RestWithASPNETUdemy.Hypermedia;
+using RestWithASPNETUdemy.Hypermedia.Abstract;
 using System.Collections.Generic;
 
-namespace RestWithASPNET.Data.VO
+namespace RestWithASPNETUdemy.Data.VO
 {
-
     public class PersonVO : ISupportsHyperMedia
-    {   
-        
+    {
         public long Id { get; set; }
 
         public string FirstName { get; set; }

@@ -4,19 +4,19 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Net.Http.Headers;
-using RestWithASPNET.Business;
-using RestWithASPNET.Business.Implementations;
-using RestWithASPNET.Hypermedia.Enricher;
-using RestWithASPNET.Model.Context;
-using RestWithASPNET.Repository;
-using RestWithASPNET.Repository.Generic;
-using RestWithASPNETUdemy.Hypermedia.Filters;
+using RestWithASPNETUdemy.Model.Context;
+using RestWithASPNETUdemy.Business;
+using RestWithASPNETUdemy.Business.Implementations;
+using RestWithASPNETUdemy.Repository;
 using Serilog;
 using System;
 using System.Collections.Generic;
+using RestWithASPNETUdemy.Repository.Generic;
+using Microsoft.Net.Http.Headers;
+using RestWithASPNETUdemy.Hypermedia.Filters;
+using RestWithASPNETUdemy.Hypermedia.Enricher;
 
-namespace RestWithASPNET
+namespace RestWithASPNETUdemy
 {
     public class Startup
     {
@@ -32,13 +32,12 @@ namespace RestWithASPNET
                 .CreateLogger();
         }
 
-        
+
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            
-            
+
             services.AddControllers();
 
             var connection = Configuration["MySQLConnection:MySQLConnectionString"];
@@ -49,18 +48,22 @@ namespace RestWithASPNET
                 MigrateDatabase(connection);
             }
 
-            ///services.AddMvc(options =>
-            //{
-            // options.RespectBrowserAcceptHeader = true;
+            services.AddMvc(options =>
+            {
+                options.RespectBrowserAcceptHeader = true;
 
-            //options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/xml"));
-            //options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
-            //})
-            // .AddXmlSerializerFormatters();
+                options.FormatterMappings.SetMediaTypeMappingForFormat("xml", MediaTypeHeaderValue.Parse("application/xml"));
+                options.FormatterMappings.SetMediaTypeMappingForFormat("json", MediaTypeHeaderValue.Parse("application/json"));
+            })
+            .AddXmlSerializerFormatters();
 
             var filterOptions = new HyperMediaFilterOptions();
             filterOptions.ContentResponseEnricherList.Add(new PersonEnricher());
+            filterOptions.ContentResponseEnricherList.Add(new BookEnricher());
 
+            services.AddSingleton(filterOptions);
+
+            //Versioning API
             services.AddApiVersioning();
 
             //Dependency Injection
@@ -68,10 +71,8 @@ namespace RestWithASPNET
             services.AddScoped<IBookBusiness, BookBusinessImplementation>();
 
             services.AddScoped(typeof(IRepository<>), typeof(GenericRepository<>));
-
-
-
         }
+
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -90,9 +91,9 @@ namespace RestWithASPNET
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapControllerRoute("DefaultApi", "{controller=values}/{id?}");
             });
         }
-
         private void MigrateDatabase(string connection)
         {
             try
@@ -100,15 +101,13 @@ namespace RestWithASPNET
                 var evolveConnection = new MySql.Data.MySqlClient.MySqlConnection(connection);
                 var evolve = new Evolve.Evolve(evolveConnection, msg => Log.Information(msg))
                 {
-                    Locations = new List<string> { "db/migrations", "db/dataset"},
+                    Locations = new List<string> { "db/migrations", "db/dataset" },
                     IsEraseDisabled = true,
-
                 };
                 evolve.Migrate();
             }
             catch (Exception ex)
             {
-
                 Log.Error("Database migration failed", ex);
                 throw;
             }
