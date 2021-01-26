@@ -58,19 +58,6 @@ namespace RestWithASPNETUdemy.Controllers
             return Ok(book);
         }
 
-        [HttpGet("since/{value}")]
-        [ProducesResponseType((200), Type = typeof(BookVO))]
-        [ProducesResponseType(204)]
-        [ProducesResponseType(400)]
-        [ProducesResponseType(401)]
-        [TypeFilter(typeof(HyperMediaFilter))]
-        public IActionResult Get(decimal value)
-        {
-            var book = _bookBusiness.FindBySince(value);
-            if (book == null) return NotFound();
-            return Ok(book);
-        }
-
         // Maps POST requests to https://localhost:{port}/api/book/
         // [FromBody] consumes the JSON object sent in the request body
         [HttpPost]
@@ -87,7 +74,7 @@ namespace RestWithASPNETUdemy.Controllers
         // Maps PUT requests to https://localhost:{port}/api/book/
         // [FromBody] consumes the JSON object sent in the request body
         [HttpPut]
-        [ProducesResponseType((200), Type = typeof(PersonVO))]
+        [ProducesResponseType((200), Type = typeof(BookVO))]
         [ProducesResponseType(400)]
         [ProducesResponseType(401)]
         [TypeFilter(typeof(HyperMediaFilter))]

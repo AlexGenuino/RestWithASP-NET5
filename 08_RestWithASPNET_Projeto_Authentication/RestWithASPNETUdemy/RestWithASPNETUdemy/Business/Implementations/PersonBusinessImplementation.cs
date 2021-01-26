@@ -1,43 +1,38 @@
 ﻿using RestWithASPNETUdemy.Data.Converter.Implementations;
 using RestWithASPNETUdemy.Data.VO;
 using RestWithASPNETUdemy.Model;
-using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repository;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RestWithASPNETUdemy.Business.Implementations
 {
-    public class BookBusinessImplementation : IBookBusiness
+    public class PersonBusinessImplementation : IPersonBusiness
     {
 
-        private readonly IRepository<Book> _repository;
+        private readonly IRepository<Person> _repository;
 
-        private readonly BookConverter _converter;
+        private readonly PersonConverter _converter;
 
-        private MySQLContext _context;
-
-        public BookBusinessImplementation(IRepository<Book> repository, MySQLContext context)
+        public PersonBusinessImplementation(IRepository<Person> repository)
         {
             _repository = repository;
-            _converter = new BookConverter();
-            _context = context;
+            _converter = new PersonConverter();
         }
 
         // Method responsible for returning all people,
-        public List<BookVO> FindAll()
+        public List<PersonVO> FindAll()
         {
             return _converter.Parse(_repository.FindAll());
         }
 
         // Method responsible for returning one person by ID
-        public BookVO FindByID(long id)
+        public PersonVO FindByID(long id)
         {
             return _converter.Parse(_repository.FindByID(id));
         }
 
         // Method responsible to crete one new person
-        public BookVO Create(BookVO person)
+        public PersonVO Create(PersonVO person)
         {
             var personEntity = _converter.Parse(person);
             personEntity = _repository.Create(personEntity);
@@ -45,7 +40,7 @@ namespace RestWithASPNETUdemy.Business.Implementations
         }
 
         // Method responsible for updating one person
-        public BookVO Update(BookVO person)
+        public PersonVO Update(PersonVO person)
         {
             var personEntity = _converter.Parse(person);
             personEntity = _repository.Update(personEntity);
@@ -57,11 +52,5 @@ namespace RestWithASPNETUdemy.Business.Implementations
         {
             _repository.Delete(id);
         }
-
-        public BookVO FindBySince(decimal valor)
-        {
-            return _converter.Parse(_context.Books.SingleOrDefault(p => p.Price.Equals(valor)));
-        }
     }
 }
-

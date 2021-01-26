@@ -1,10 +1,8 @@
 ﻿using RestWithASPNETUdemy.Data.Converter.Implementations;
 using RestWithASPNETUdemy.Data.VO;
 using RestWithASPNETUdemy.Model;
-using RestWithASPNETUdemy.Model.Context;
 using RestWithASPNETUdemy.Repository;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace RestWithASPNETUdemy.Business.Implementations
 {
@@ -15,13 +13,10 @@ namespace RestWithASPNETUdemy.Business.Implementations
 
         private readonly BookConverter _converter;
 
-        private MySQLContext _context;
-
-        public BookBusinessImplementation(IRepository<Book> repository, MySQLContext context)
+        public BookBusinessImplementation(IRepository<Book> repository)
         {
             _repository = repository;
             _converter = new BookConverter();
-            _context = context;
         }
 
         // Method responsible for returning all people,
@@ -56,11 +51,6 @@ namespace RestWithASPNETUdemy.Business.Implementations
         public void Delete(long id)
         {
             _repository.Delete(id);
-        }
-
-        public BookVO FindBySince(decimal valor)
-        {
-            return _converter.Parse(_context.Books.SingleOrDefault(p => p.Price.Equals(valor)));
         }
     }
 }

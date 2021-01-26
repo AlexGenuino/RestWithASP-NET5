@@ -42,8 +42,6 @@ namespace RestWithASPNETUdemy
                 .CreateLogger();
         }
 
-
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -51,8 +49,8 @@ namespace RestWithASPNETUdemy
 
             new ConfigureFromConfigurationOptions<TokenConfiguration>(
                     Configuration.GetSection("TokenConfigurations")
-                    )
-                    .Configure(tokenConfigurations);
+                )
+                .Configure(tokenConfigurations);
 
             services.AddSingleton(tokenConfigurations);
 
@@ -117,18 +115,17 @@ namespace RestWithASPNETUdemy
             //Versioning API
             services.AddApiVersioning();
 
-            services.AddSwaggerGen(c =>
-            {
+            services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1",
                     new OpenApiInfo
                     {
-                        Title = "REST API's ASP.NET CORE 5 AND DOCKER",
+                        Title = "REST API's From 0 to Azure with ASP.NET Core 5 and Docker",
                         Version = "v1",
-                        Description = "API RestFUL",
+                        Description = "API RESTful developed in course 'REST API's From 0 to Azure with ASP.NET Core 5 and Docker'",
                         Contact = new OpenApiContact
                         {
-                            Name = "Alexsander Genuino",
-                            Url = new Uri("https://github.com/AlexGenuino")
+                            Name = "Leandro Costa",
+                            Url = new Uri("https://github.com/leandrocgsi")
                         }
                     });
             });
@@ -164,13 +161,12 @@ namespace RestWithASPNETUdemy
 
             app.UseSwaggerUI(c => {
                 c.SwaggerEndpoint("/swagger/v1/swagger.json",
-                    "REST API ASP.NET CORE AND DOCKER");
+                    "REST API's From 0 to Azure with ASP.NET Core 5 and Docker - v1");
             });
 
             var option = new RewriteOptions();
             option.AddRedirect("^$", "swagger");
             app.UseRewriter(option);
-
 
             app.UseAuthorization();
 
